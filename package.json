@@ -13,7 +13,7 @@
     "node": ">=20"
   },
   "scripts": {
-    "test": "node --test test/",
+    "test": "node --test",
     "build": "ncc build src/main.mjs -o dist --minify"
   },
   "devDependencies": {
