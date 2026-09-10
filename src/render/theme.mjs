@@ -1,8 +1,11 @@
 // Paletas de vinilo. Los dos temas comparten exactamente las mismas claves:
 // el render nunca pregunta cuál está activo, solo lee `palette.title`.
 
+// Comillas SIMPLES alrededor de las familias con espacios: este string se
+// inyecta dentro de un atributo XML con comillas dobles, y unas dobles acá
+// adentro cierran el atributo y rompen el documento entero.
 export const FONT =
-  '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
+  "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
 
 // Verde de marca de Spotify. Es lo único que no varía entre temas: es una
 // marca ajena, no un color nuestro que podamos reinterpretar.

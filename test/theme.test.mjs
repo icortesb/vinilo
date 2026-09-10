@@ -36,3 +36,9 @@ test("un tema desconocido cae a both", () => {
 test("el stack de fuentes es solo del sistema", () => {
   assert.ok(!/url\(|@font-face|https?:/.test(FONT));
 });
+
+test("el stack de fuentes no lleva comillas dobles", () => {
+  // Se inyecta en un atributo XML con comillas dobles; unas dobles acá
+  // cerrarían el atributo y romperían el SVG entero.
+  assert.ok(!FONT.includes('"'), FONT);
+});
