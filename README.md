@@ -5,8 +5,8 @@ Tus reproducciones recientes de Spotify como un SVG en tu README de GitHub.
 <!-- Reemplazá USER por tu usuario cuando lo pongas en tu perfil. -->
 <picture>
   <source media="(prefers-color-scheme: dark)"
-          srcset="https://raw.githubusercontent.com/icortesb/icortesb/vinilo/vinilo-dark.svg">
-  <img src="https://raw.githubusercontent.com/icortesb/icortesb/vinilo/vinilo.svg" width="400">
+          srcset="https://raw.githubusercontent.com/icortesb/icortesb/output/vinilo-dark.svg">
+  <img src="https://raw.githubusercontent.com/icortesb/icortesb/output/vinilo.svg" width="400">
 </picture>
 
 ## Por qué otro más
