@@ -32,12 +32,34 @@ async function git(cwd, args, { env = {}, input } = {}) {
   return stdout.trim();
 }
 
-async function branchTip(cwd, branch) {
+async function revParse(cwd, ref) {
   try {
-    return await git(cwd, ["rev-parse", "--verify", `refs/heads/${branch}`]);
+    return await git(cwd, ["rev-parse", "--verify", ref]);
   } catch {
     return null;
   }
+}
+
+// El estado publicado vive en el remoto, no en el checkout. actions/checkout
+// trae solo la rama por defecto, así que la rama de la card casi nunca está
+// local: sin este fetch la veríamos como inexistente, crearíamos una huérfana
+// y el push saldría rechazado por no ser fast-forward. Peor todavía, un push
+// forzado ahí borraría los archivos de quien más publique en esa rama.
+async function branchTip(cwd, branch, remote, doFetch) {
+  if (doFetch) {
+    try {
+      await git(cwd, [
+        "fetch", "--no-tags", "--depth=1", remote,
+        `+refs/heads/${branch}:refs/remotes/${remote}/${branch}`,
+      ]);
+    } catch {
+      // La rama todavía no existe en el remoto: se crea en este commit.
+    }
+  }
+  return (
+    (await revParse(cwd, `refs/remotes/${remote}/${branch}`)) ??
+    (await revParse(cwd, `refs/heads/${branch}`))
+  );
 }
 
 export async function publish({
@@ -56,7 +78,7 @@ export async function publish({
   const env = { ...BOT, GIT_INDEX_FILE: indexFile };
 
   try {
-    const parent = await branchTip(cwd, branch);
+    const parent = await branchTip(cwd, branch, remote, push);
 
     // Cargar lo que YA está en la rama. Si no existe, arrancamos huérfanos.
     if (parent) {
