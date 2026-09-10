@@ -14,7 +14,7 @@
   },
   "scripts": {
     "test": "node --test",
-    "build": "ncc build src/main.mjs -o dist --minify"
+    "build": "ncc build src/index.mjs -o dist --minify"
   },
   "devDependencies": {
     "@vercel/ncc": "^0.38.3"

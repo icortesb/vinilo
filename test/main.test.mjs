@@ -130,3 +130,20 @@ test("el lang llega hasta el SVG", async () => {
   });
   assert.match(seen.files[0].content, /hace \d+ hora/);
 });
+
+test("importar el módulo no ejecuta la Action, ni dentro de Actions", async () => {
+  // El guard viejo era `if (process.env.GITHUB_ACTIONS)`, que está puesto
+  // cuando los tests corren en CI: importar main.mjs disparaba la Action y
+  // explotaba pidiendo inputs. El entrypoint vive en index.mjs justamente
+  // para que este import no haga nada.
+  const before = process.env.GITHUB_ACTIONS;
+  process.env.GITHUB_ACTIONS = "true";
+  try {
+    const mod = await import(`../src/main.mjs?guard=${Date.now()}`);
+    assert.equal(typeof mod.run, "function");
+    assert.equal(typeof mod.main, "function");
+  } finally {
+    if (before === undefined) delete process.env.GITHUB_ACTIONS;
+    else process.env.GITHUB_ACTIONS = before;
+  }
+});

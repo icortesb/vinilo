@@ -100,7 +100,7 @@ function readInputs() {
   };
 }
 
-async function main() {
+export async function main() {
   try {
     const result = await run({ inputs: readInputs() });
     core.setOutput("paths", result.paths.join(","));
@@ -113,7 +113,3 @@ async function main() {
     core.setFailed(err.stack ?? String(err));
   }
 }
-
-// Solo corre como entrypoint de la Action; importarlo desde un test no
-// dispara nada.
-if (process.env.GITHUB_ACTIONS) await main();

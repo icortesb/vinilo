@@ -110,6 +110,7 @@ src/
     en.json es.json  strings estáticos
   publish.mjs        commit a la rama preservando lo ajeno
   main.mjs           orquesta; mapea errores a resultados de la Action
+  index.mjs          entrypoint de la Action
 dist/index.js        bundle de ncc, commiteado
 ```
 
