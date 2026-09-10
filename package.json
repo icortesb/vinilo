@@ -1,12 +1,17 @@
 {
   "name": "vinilo",
   "version": "0.1.0",
-  "description": "Tus reproducciones recientes de Spotify como un SVG estático en tu README",
+  "description": "Tus reproducciones recientes de Spotify como un SVG est\u00e1tico en tu README",
   "type": "module",
   "license": "MIT",
-  "author": "Iván Cortés",
-  "repository": { "type": "git", "url": "https://github.com/icortesb/vinilo.git" },
-  "engines": { "node": ">=20" },
+  "author": "Iv\u00e1n Cort\u00e9s",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/icortesb/vinilo.git"
+  },
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "test": "node --test test/",
     "build": "ncc build src/main.mjs -o dist --minify"
@@ -14,5 +19,15 @@
   "devDependencies": {
     "@actions/core": "^1.11.1",
     "@vercel/ncc": "^0.38.3"
-  }
+  },
+  "bin": {
+    "vinilo": "bin/vinilo.mjs"
+  },
+  "files": [
+    "action.yml",
+    "bin/",
+    "dist/",
+    "src/",
+    "README.md"
+  ]
 }
