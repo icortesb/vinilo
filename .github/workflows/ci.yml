@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [20, 22]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - run: npm ci
+      - run: npm test
+
+  dist-fresh:
+    # Las Actions JS corren el bundle commiteado, no el código fuente. Si
+    # dist/ queda atrás, la Action sigue publicando la versión vieja sin que
+    # nada falle. Este job convierte ese error silencioso en uno ruidoso.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: dist/ tiene que estar al día con src/
+        run: |
+          if ! git diff --exit-code -- dist/; then
+            echo "::error::dist/ quedó desactualizado. Corré 'npm run build' y commiteá el resultado."
+            exit 1
+          fi
