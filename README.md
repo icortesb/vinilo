@@ -1,33 +1,30 @@
 # vinilo
 
-Tus reproducciones recientes de Spotify como un SVG en tu README de GitHub.
+Your recently played Spotify tracks as an SVG in your GitHub README.
 
-<!-- Reemplazá USER por tu usuario cuando lo pongas en tu perfil. -->
 <picture>
   <source media="(prefers-color-scheme: dark)"
           srcset="https://raw.githubusercontent.com/icortesb/icortesb/output/vinilo-dark.svg">
   <img src="https://raw.githubusercontent.com/icortesb/icortesb/output/vinilo.svg" width="400">
 </picture>
 
-## Por qué otro más
+## Why another one
 
-Las cards de Spotify para READMEs funcionan así: un servicio central guarda tu
-refresh token, y tu README apunta a una URL de ese servicio. Eso tiene dos
-problemas que no son hipotéticos.
+The Spotify cards for READMEs all work the same way: a central service stores
+your refresh token, and your README points at a URL on that service. That has
+two problems, and neither is hypothetical.
 
-**Cuando el servicio se cae, tu perfil muestra una card rota** — y te enterás
-tarde, porque nadie mira su propio README. **Y alguien más custodia tu token**,
-que es de larga duración, para dibujar una imagen.
+**When the service goes down, your profile shows a broken card** — and you find
+out late, because nobody reads their own README. **And someone else holds your
+token**, a long-lived one, to draw a picture.
 
-vinilo no corre en ningún servidor. Es una GitHub Action: genera el SVG en
-**tus** Actions y lo commitea a una rama **tuya**. No hay servicio que pueda
-caerse, no hay rate limit compartido, y el token no sale de los secrets de tu
-repo.
+vinilo doesn't run on a server. It's a GitHub Action: it builds the SVG in
+**your** Actions and commits it to **your** branch. Nothing can go down, there's
+no shared rate limit, and the token never leaves your repository secrets.
 
-El precio es que el alta lleva unos minutos en vez de pegar una URL. Vale la
-pena.
+The price is a few minutes of setup instead of pasting a URL. Worth it.
 
-## Uso
+## Usage
 
 ```yaml
 name: vinilo
@@ -51,7 +48,7 @@ jobs:
           publish-to: vinilo
 ```
 
-Y en tu README:
+Then in your README:
 
 ```html
 <picture>
@@ -61,75 +58,76 @@ Y en tu README:
 </picture>
 ```
 
-## Las credenciales
+## Credentials
 
-Hace falta una app de Spotify y un refresh token. Es una vez y son cinco
-minutos.
+You need a Spotify app and a refresh token. Once, five minutes.
 
-1. Creá una app en [developer.spotify.com/dashboard](https://developer.spotify.com/dashboard).
-   Redirect URI: `http://127.0.0.1:8888/callback` (Spotify ya no acepta
-   `localhost` en apps nuevas, tiene que ser la IP). Marcá **Web API**.
-2. Copiá el **Client ID** y el **Client secret**.
-3. Sacá el refresh token:
+1. Create an app at [developer.spotify.com/dashboard](https://developer.spotify.com/dashboard).
+   Redirect URI: `http://127.0.0.1:8888/callback` (Spotify no longer accepts
+   `localhost` for new apps, it has to be the IP). Check **Web API**.
+2. Copy the **Client ID** and **Client secret**.
+3. Get the refresh token:
 
    ```sh
    npx github:icortesb/vinilo auth
    ```
 
-   Abre el navegador, autorizás, y te imprime los tres `gh secret set` listos
-   para pegar. El único scope que pide es `user-read-recently-played`.
+   It opens your browser, you authorize, and it prints the three
+   `gh secret set` commands ready to paste. The only scope it asks for is
+   `user-read-recently-played`.
 
-4. Cargá `SPOTIFY_CLIENT_ID`, `SPOTIFY_CLIENT_SECRET` y
-   `SPOTIFY_REFRESH_TOKEN` como secrets del repo.
+4. Add `SPOTIFY_CLIENT_ID`, `SPOTIFY_CLIENT_SECRET` and
+   `SPOTIFY_REFRESH_TOKEN` as repository secrets.
 
 ## Inputs
 
-| input | requerido | default | |
+| input | required | default | |
 |---|---|---|---|
-| `client-id` | sí | | |
-| `client-secret` | sí | | |
-| `refresh-token` | sí | | scope `user-read-recently-played` |
+| `client-id` | yes | | |
+| `client-secret` | yes | | |
+| `refresh-token` | yes | | `user-read-recently-played` scope |
 | `count` | no | `5` | 1–10 |
 | `theme` | no | `both` | `both`, `dark`, `light` |
-| `lang` | no | `en` | cualquier locale que entienda `Intl` |
-| `output-dir` | no | `.vinilo` | dónde escribir dentro del workspace |
-| `filename` | no | `vinilo` | nombre base, sin extensión |
-| `publish-to` | no | — | rama donde commitear. Vacío: solo escribe archivos |
+| `lang` | no | `en` | any locale `Intl` understands |
+| `output-dir` | no | `.vinilo` | where to write inside the workspace |
+| `filename` | no | `vinilo` | base name, no extension |
+| `publish-to` | no | — | branch to commit to. Empty: write files only |
 
-Con `theme: both` salen `vinilo.svg` y `vinilo-dark.svg`. Con un tema solo,
-un `vinilo.svg` con ese tema.
+With `theme: both` you get `vinilo.svg` and `vinilo-dark.svg`. With a single
+theme, one `vinilo.svg` in that theme.
 
-## Detalles que importan
+## Things that matter
 
-**Convive con otras Actions en la misma rama.** Si ya publicás el snake de
-contribuciones en la rama que le pasás a `publish-to`, sus archivos se
-preservan. vinilo escribe los suyos y no toca nada más.
+**It coexists with other Actions on the same branch.** If you already publish
+the contribution snake to the branch you pass to `publish-to`, its files are
+preserved. vinilo writes its own and touches nothing else.
 
-**Una falla transitoria nunca te rompe la card.** Si Spotify devuelve 429, si
-la red se cae, o si no escuchaste nada últimamente, la Action **no publica** y
-termina con un warning. La card que ya está en la rama sigue mostrando lo
-último bueno. Solo falla en rojo cuando la causa es tuya y tenés que actuar:
-refresh token revocado o credenciales mal.
+**A transient failure never breaks your card.** If Spotify returns 429, if the
+network drops, or if you haven't listened to anything lately, the Action
+**doesn't publish** and finishes with a warning. The card already on the branch
+keeps showing the last good state. It only fails red when the cause is yours
+and you have to act: a revoked refresh token or wrong credentials.
 
-**Los tiempos se traducen solos.** `lang: es` da "hace 2 horas", `lang: ja` da
-"2 時間前". Sale de `Intl`, así que anda con cualquier locale aunque no haya
-traducción para los textos fijos.
+**Times translate themselves.** `lang: es` gives "hace 2 horas", `lang: ja`
+gives "2 時間前". It comes from `Intl`, so it works with any locale even when
+there's no translation for the fixed strings.
 
-**GitHub cachea las imágenes unos 5 minutos.** Si acabás de correr el workflow
-y ves la card vieja, esperá un poco.
+**GitHub caches images for about 5 minutes.** If you just ran the workflow and
+still see the old card, give it a moment.
 
-## Fuera de alcance por ahora
+## Not supported yet
 
-**RTL.** Árabe y hebreo necesitan el layout espejado —tapa a la derecha,
-alineación invertida—, que es trabajo de diseño y no una traducción. Prefiero
-decir que no antes que aceptar un `ar.json` y entregar algo roto que aparenta
-soporte.
+**RTL.** Arabic and Hebrew need a mirrored layout — art on the right, reversed
+alignment — which is design work, not a translation. I'd rather say no than
+accept an `ar.json` and ship something broken that pretends to support it.
 
-## Sumar un idioma
+## Adding a language
 
-Copiá `src/i18n/en.json`, traducí los dos strings, y agregalo al mapa de
-`src/i18n/index.mjs`. Los tiempos relativos no hay que traducirlos.
+Copy `src/i18n/en.json`, translate the two strings, and add it to the map in
+`src/i18n/index.mjs`. Relative times need no translation.
 
-## Licencia
+Note: the source comments are in Spanish.
+
+## License
 
 MIT

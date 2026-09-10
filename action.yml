@@ -1,5 +1,5 @@
 name: vinilo readme card
-description: Tus reproducciones recientes de Spotify como un SVG estático en tu README
+description: Your recently played Spotify tracks as a static SVG in your README
 author: Iván Cortés
 
 branding:
@@ -8,46 +8,46 @@ branding:
 
 inputs:
   client-id:
-    description: Client ID de tu app de Spotify
+    description: Client ID of your Spotify app
     required: true
   client-secret:
-    description: Client secret de tu app de Spotify
+    description: Client secret of your Spotify app
     required: true
   refresh-token:
-    description: Refresh token con el scope user-read-recently-played
+    description: Refresh token with the user-read-recently-played scope
     required: true
   count:
-    description: Cuántos tracks mostrar (1-10)
+    description: How many tracks to show (1-10)
     required: false
     default: "5"
   theme:
-    description: both, dark o light. Con "both" salen dos archivos para usar con <picture>
+    description: both, dark or light. "both" writes two files, for use with <picture>
     required: false
     default: both
   lang:
-    description: Locale para los tiempos relativos (en, es, o cualquiera que entienda Intl)
+    description: Locale for relative times (en, es, or anything Intl understands)
     required: false
     default: en
   output-dir:
-    description: Dónde escribir los SVG dentro del workspace
+    description: Where to write the SVGs inside the workspace
     required: false
     default: .vinilo
   filename:
-    description: Nombre base de los archivos, sin extensión
+    description: Base name for the files, without extension
     required: false
     default: vinilo
   publish-to:
     description: >-
-      Rama donde commitear los SVG. Vacío deja los archivos escritos y no
-      commitea nada. Los archivos que ya estén en esa rama se preservan.
+      Branch to commit the SVGs to. Leave empty to write the files without
+      committing. Files already on that branch are preserved.
     required: false
     default: ""
 
 outputs:
   paths:
-    description: Archivos generados, separados por coma
+    description: Generated files, comma separated
   track-count:
-    description: Cuántos tracks entraron en la card
+    description: How many tracks made it into the card
 
 runs:
   using: node24
