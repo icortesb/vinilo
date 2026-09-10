@@ -1,0 +1,120 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <style>
+    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    a { color: #1db954; } a:hover { color: #17a247; }
+    .board { padding: 40px; background: #0e0e12; min-height: 100%; box-sizing: border-box; }
+    .kicker { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #6b6b7a; margin: 0 0 8px; }
+    .h { font-size: 22px; font-weight: 650; color: #f2f2f5; margin: 0 0 6px; letter-spacing: -0.01em; }
+    .sub { font-size: 13px; line-height: 1.5; color: #9a9aa8; margin: 0 0 28px; max-width: 720px; }
+    .pair { display: flex; gap: 40px; }
+    .cap { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #52525f; margin: 0 0 10px; }
+  </style>
+</helmet>
+<div class="board">
+  <p class="kicker">Dirección B · eje: jerarquía por escala</p>
+  <h1 class="h">Now Bar</h1>
+  <p class="sub">El track más reciente es un héroe; los otros cuatro lo sostienen. Resuelve la jerarquía a nivel de tarjeta en vez de pelearla dentro de cada fila — lo que te importa es qué sonó recién. Contra: si no escuchaste nada hace rato, el héroe destaca algo viejo.</p>
+
+  <div class="pair">
+    <div>
+      <p class="cap">Oscuro</p>
+      <div style="width: 400px; background: #14141a; border: 1px solid #26262f; border-radius: 14px; overflow: hidden;">
+
+        <div style="display: flex; gap: 14px; padding: 18px 18px 16px; align-items: flex-start;">
+          <div style="width: 72px; height: 72px; border-radius: 8px; flex-shrink: 0; background: linear-gradient(140deg, #e8654f 0%, #b8365c 55%, #5c2a6e 100%);"></div>
+          <div style="flex-grow: 1; min-width: 0; padding-top: 2px;">
+            <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 7px;">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="#1db954" aria-hidden="true"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+              <span style="font-size: 10px; letter-spacing: 0.11em; text-transform: uppercase; color: #6b6b7a;">Recently played</span>
+            </div>
+            <div style="font-size: 17px; font-weight: 640; color: #f2f2f5; letter-spacing: -0.01em; line-height: 1.25; margin-bottom: 3px;">MOONLIGHT SUNRISE</div>
+            <div style="font-size: 13px; color: #9a9aa8; line-height: 1.3;">TWICE</div>
+            <div style="font-size: 11px; color: #6b6b7a; margin-top: 6px;">hace 2 horas</div>
+          </div>
+        </div>
+
+        <div style="height: 1px; background: #23232c; margin: 0 18px;"></div>
+
+        <div style="display: flex; flex-direction: column; padding: 6px 18px 14px;">
+          <div style="display: flex; align-items: center; gap: 11px; padding: 7px 0;">
+            <div style="width: 28px; height: 28px; border-radius: 5px; flex-shrink: 0; background: linear-gradient(140deg, #2f6fb8 0%, #1d3f78 100%);"></div>
+            <div style="flex-grow: 1; min-width: 0; font-size: 12.5px; color: #d6d6de; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Brave<span style="color: #6b6b7a;"> · TWICE</span></div>
+            <div style="font-size: 10.5px; color: #52525f; flex-shrink: 0;">3 h</div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 11px; padding: 7px 0;">
+            <div style="width: 28px; height: 28px; border-radius: 5px; flex-shrink: 0; background: linear-gradient(140deg, #d9a441 0%, #8c5a1e 100%);"></div>
+            <div style="flex-grow: 1; min-width: 0; font-size: 12.5px; color: #d6d6de; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Feel Special<span style="color: #6b6b7a;"> · TWICE</span></div>
+            <div style="font-size: 10.5px; color: #52525f; flex-shrink: 0;">5 h</div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 11px; padding: 7px 0;">
+            <div style="width: 28px; height: 28px; border-radius: 5px; flex-shrink: 0; background: linear-gradient(140deg, #c23b4a 0%, #4a1220 100%);"></div>
+            <div style="flex-grow: 1; min-width: 0; font-size: 12.5px; color: #d6d6de; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">CRY FOR ME<span style="color: #6b6b7a;"> · TWICE</span></div>
+            <div style="font-size: 10.5px; color: #52525f; flex-shrink: 0;">1 d</div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 11px; padding: 7px 0;">
+            <div style="width: 28px; height: 28px; border-radius: 5px; flex-shrink: 0; background: linear-gradient(140deg, #e58fb0 0%, #a33f74 100%);"></div>
+            <div style="flex-grow: 1; min-width: 0; font-size: 12.5px; color: #d6d6de; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">The Feels (Extended Mix Version)<span style="color: #6b6b7a;"> · TWICE</span></div>
+            <div style="font-size: 10.5px; color: #52525f; flex-shrink: 0;">1 d</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div>
+      <p class="cap">Claro</p>
+      <div style="width: 400px; background: #fbfbfc; border: 1px solid #e6e6ea; border-radius: 14px; overflow: hidden;">
+
+        <div style="display: flex; gap: 14px; padding: 18px 18px 16px; align-items: flex-start;">
+          <div style="width: 72px; height: 72px; border-radius: 8px; flex-shrink: 0; background: linear-gradient(140deg, #e8654f 0%, #b8365c 55%, #5c2a6e 100%);"></div>
+          <div style="flex-grow: 1; min-width: 0; padding-top: 2px;">
+            <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 7px;">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="#1db954" aria-hidden="true"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+              <span style="font-size: 10px; letter-spacing: 0.11em; text-transform: uppercase; color: #8a8a96;">Recently played</span>
+            </div>
+            <div style="font-size: 17px; font-weight: 640; color: #17171c; letter-spacing: -0.01em; line-height: 1.25; margin-bottom: 3px;">MOONLIGHT SUNRISE</div>
+            <div style="font-size: 13px; color: #5c5c68; line-height: 1.3;">TWICE</div>
+            <div style="font-size: 11px; color: #8a8a96; margin-top: 6px;">hace 2 horas</div>
+          </div>
+        </div>
+
+        <div style="height: 1px; background: #ececf0; margin: 0 18px;"></div>
+
+        <div style="display: flex; flex-direction: column; padding: 6px 18px 14px;">
+          <div style="display: flex; align-items: center; gap: 11px; padding: 7px 0;">
+            <div style="width: 28px; height: 28px; border-radius: 5px; flex-shrink: 0; background: linear-gradient(140deg, #2f6fb8 0%, #1d3f78 100%);"></div>
+            <div style="flex-grow: 1; min-width: 0; font-size: 12.5px; color: #33333c; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Brave<span style="color: #8a8a96;"> · TWICE</span></div>
+            <div style="font-size: 10.5px; color: #a0a0ac; flex-shrink: 0;">3 h</div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 11px; padding: 7px 0;">
+            <div style="width: 28px; height: 28px; border-radius: 5px; flex-shrink: 0; background: linear-gradient(140deg, #d9a441 0%, #8c5a1e 100%);"></div>
+            <div style="flex-grow: 1; min-width: 0; font-size: 12.5px; color: #33333c; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Feel Special<span style="color: #8a8a96;"> · TWICE</span></div>
+            <div style="font-size: 10.5px; color: #a0a0ac; flex-shrink: 0;">5 h</div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 11px; padding: 7px 0;">
+            <div style="width: 28px; height: 28px; border-radius: 5px; flex-shrink: 0; background: linear-gradient(140deg, #c23b4a 0%, #4a1220 100%);"></div>
+            <div style="flex-grow: 1; min-width: 0; font-size: 12.5px; color: #33333c; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">CRY FOR ME<span style="color: #8a8a96;"> · TWICE</span></div>
+            <div style="font-size: 10.5px; color: #a0a0ac; flex-shrink: 0;">1 d</div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 11px; padding: 7px 0;">
+            <div style="width: 28px; height: 28px; border-radius: 5px; flex-shrink: 0; background: linear-gradient(140deg, #e58fb0 0%, #a33f74 100%);"></div>
+            <div style="flex-grow: 1; min-width: 0; font-size: 12.5px; color: #33333c; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">The Feels (Extended Mix Version)<span style="color: #8a8a96;"> · TWICE</span></div>
+            <div style="font-size: 10.5px; color: #a0a0ac; flex-shrink: 0;">1 d</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>
