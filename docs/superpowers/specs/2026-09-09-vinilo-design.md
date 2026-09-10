@@ -121,7 +121,8 @@ previene con un check, no con disciplina.
 
 **Cero dependencias de runtime.** Node 20+ trae `fetch`, `Intl` y `Buffer`.
 El SVG se arma con templates de string. Además de dejar el bundle en decenas
-de KB, evita que el árbol de dependencias sea superficie de ataque en una
+de KB (el bundle final pesa 15 KB), evita que el árbol de dependencias sea
+superficie de ataque en una
 Action que maneja tokens de Spotify ajenos.
 
 **Versionado con tag móvil.** Se publica `v1.0.0` y `v1` se mueve para

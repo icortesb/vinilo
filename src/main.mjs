@@ -1,6 +1,6 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import core from "@actions/core";
+import core from "./actions.mjs";
 import { recentlyPlayed as fetchRecent } from "./spotify.mjs";
 import { attachArt as fetchArt } from "./art.mjs";
 import { publish as publishToBranch } from "./publish.mjs";
