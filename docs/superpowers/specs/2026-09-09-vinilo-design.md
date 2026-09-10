@@ -114,7 +114,9 @@ src/
 dist/index.js        bundle de ncc, commiteado
 ```
 
-**Bundle commiteado.** Las Actions JS no corren `npm install`: el runtime
+**Bundle commiteado.** El runtime declarado es `node24` (GitHub deprecó
+`node20` y fuerza las Actions a correr en 24 igual). Las Actions JS no corren
+`npm install`: el runtime
 ejecuta un archivo y nada más. La alternativa es una Docker action, mucho más
 lenta de arrancar. Va `ncc`, con un job de CI que falla si `dist/` quedó
 desactualizado respecto de `src/` — es el error clásico del rubro y se
