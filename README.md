@@ -115,8 +115,8 @@ history once it ends, so a card built from history alone is always behind.
 vinilo also asks what's playing right now: if something is, it becomes the top
 of the card — with a small animated equalizer and the album instead of a
 timestamp — and the oldest track drops off, so the card keeps its height.
-Paused doesn't count. Run the workflow every 15 minutes or so; every 2 hours it
-would almost never catch you listening.
+Paused doesn't count. For this to show up at all, the workflow has to run
+often — see [Keeping it fresh](#keeping-it-fresh).
 
 **Upgrading from a token without the second scope?** Nothing breaks: the card
 keeps showing recently played, and the run ends with a warning telling you
@@ -139,6 +139,39 @@ there's no translation for the fixed strings.
 
 **GitHub caches images for about 5 minutes.** If you just ran the workflow and
 still see the old card, give it a moment.
+
+## Keeping it fresh
+
+**GitHub doesn't run schedules on time.** `schedule` is best effort: runs get
+delayed by tens of minutes and, on busy hours, silently dropped. A `*/15` cron
+can go an hour without running, and a 2-hour one can end up running every 4 or
+5\. That's fine for stats; it defeats "now playing".
+
+`workflow_dispatch` runs, on the other hand, start within seconds. So the fix
+is to have an external cron trigger the workflow, and keep `schedule` as a
+fallback. Any cron that can send a POST works; this uses the free
+[cron-job.org](https://cron-job.org).
+
+1. Create a [fine-grained token](https://github.com/settings/personal-access-tokens/new):
+   **Only select repositories** → the repo with the workflow;
+   **Repository permissions → Actions: Read and write**. Nothing else.
+2. In cron-job.org, create a cronjob:
+   - **URL:** `https://api.github.com/repos/USER/REPO/actions/workflows/vinilo.yml/dispatches`
+     (use your workflow's file name)
+   - **Schedule:** every 15 minutes
+   - **Advanced → Request method:** `POST`
+   - **Headers:**
+     `Authorization: Bearer YOUR_TOKEN`,
+     `Accept: application/vnd.github+json`,
+     `Content-Type: application/json`
+   - **Request body:** `{"ref":"main"}` (your default branch)
+3. Test it: GitHub answers `204` and a run appears in the Actions tab.
+
+About that token: yes, a third party now holds one, which is what the start of
+this README warns against. The difference is what it can do. It can't read
+your code or your Spotify: at worst it triggers your workflow more often than
+you'd like. If cron-job.org goes away, your card doesn't break — it just goes
+back to GitHub's pace.
 
 ## Not supported yet
 
