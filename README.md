@@ -1,6 +1,7 @@
 # vinilo
 
-Your recently played Spotify tracks as an SVG in your GitHub README.
+What you're playing on Spotify right now, and what you played before, as an SVG
+in your GitHub README.
 
 <picture>
   <source media="(prefers-color-scheme: dark)"
@@ -29,7 +30,7 @@ The price is a few minutes of setup instead of pasting a URL. Worth it.
 ```yaml
 name: vinilo
 on:
-  schedule: [{ cron: "0 */2 * * *" }]
+  schedule: [{ cron: "*/15 * * * *" }]
   workflow_dispatch:
 
 permissions:
@@ -51,12 +52,23 @@ jobs:
 Then in your README:
 
 ```html
-<picture>
-  <source media="(prefers-color-scheme: dark)"
-          srcset="https://raw.githubusercontent.com/USER/USER/vinilo/vinilo-dark.svg">
-  <img src="https://raw.githubusercontent.com/USER/USER/vinilo/vinilo.svg" width="400">
-</picture>
+<a href="https://open.spotify.com/user/YOUR_SPOTIFY_ID">
+  <picture>
+    <source media="(prefers-color-scheme: dark)"
+            srcset="https://raw.githubusercontent.com/USER/USER/vinilo/vinilo-dark.svg">
+    <img src="https://raw.githubusercontent.com/USER/USER/vinilo/vinilo.svg" width="400">
+  </picture>
+</a>
 ```
+
+The `<a>` is optional: it makes the whole card link to your Spotify profile.
+Get the URL from the Spotify app → your profile → ⋯ → Share → Copy link.
+
+**Why one link and not one per track.** GitHub serves README SVGs as images,
+and links inside an image don't work. Per-track links would mean splitting the
+card into several images whose links change on every run — which needs either
+rewriting your README or hosting redirects on Pages. Both are moving parts that
+can break silently, and vinilo exists to not have those.
 
 ## Credentials
 
@@ -73,8 +85,8 @@ You need a Spotify app and a refresh token. Once, five minutes.
    ```
 
    It opens your browser, you authorize, and it prints the three
-   `gh secret set` commands ready to paste. The only scope it asks for is
-   `user-read-recently-played`.
+   `gh secret set` commands ready to paste. It asks for two read-only scopes:
+   `user-read-recently-played` and `user-read-currently-playing`.
 
 4. Add `SPOTIFY_CLIENT_ID`, `SPOTIFY_CLIENT_SECRET` and
    `SPOTIFY_REFRESH_TOKEN` as repository secrets.
@@ -85,7 +97,7 @@ You need a Spotify app and a refresh token. Once, five minutes.
 |---|---|---|---|
 | `client-id` | yes | | |
 | `client-secret` | yes | | |
-| `refresh-token` | yes | | `user-read-recently-played` scope |
+| `refresh-token` | yes | | `user-read-recently-played` + `user-read-currently-playing` scopes |
 | `count` | no | `5` | 1–10 |
 | `theme` | no | `both` | `both`, `dark`, `light` |
 | `lang` | no | `en` | any locale `Intl` understands |
@@ -97,6 +109,19 @@ With `theme: both` you get `vinilo.svg` and `vinilo-dark.svg`. With a single
 theme, one `vinilo.svg` in that theme.
 
 ## Things that matter
+
+**Now playing beats recently played.** Spotify only adds a track to your
+history once it ends, so a card built from history alone is always behind.
+vinilo also asks what's playing right now: if something is, it becomes the top
+of the card — with a small animated equalizer and the album instead of a
+timestamp — and the oldest track drops off, so the card keeps its height.
+Paused doesn't count. Run the workflow every 15 minutes or so; every 2 hours it
+would almost never catch you listening.
+
+**Upgrading from a token without the second scope?** Nothing breaks: the card
+keeps showing recently played, and the run ends with a warning telling you
+which scope is missing. Run `npx github:icortesb/vinilo auth` again and replace
+`SPOTIFY_REFRESH_TOKEN`.
 
 **It coexists with other Actions on the same branch.** If you already publish
 the contribution snake to the branch you pass to `publish-to`, its files are

@@ -9,7 +9,9 @@ import { stdin, stdout } from "node:process";
 
 const PORT = 8888;
 const REDIRECT = `http://127.0.0.1:${PORT}/callback`;
-const SCOPE = "user-read-recently-played";
+// Dos scopes de solo lectura: el historial y lo que suena ahora. Ninguno toca
+// tu cuenta ni tu reproductor.
+const SCOPE = "user-read-recently-played user-read-currently-playing";
 
 const HELP = `
 vinilo — tus reproducciones recientes de Spotify en tu README

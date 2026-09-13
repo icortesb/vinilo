@@ -19,6 +19,19 @@ const TITLE_SIZE = 17;
 const ARTIST_SIZE = 13;
 const TIME_SIZE = 11;
 
+// Barras del ecualizador del hero que suena ahora. Las animaciones SMIL sí
+// corren dentro de un <img>, que es como GitHub sirve este SVG: no hay JS ni
+// hover, pero un <animate> declarativo anda.
+const BAR_W = 2.5;
+const BAR_GAP = 2;
+const BAR_MAX = 9;
+const BAR_MIN = 3;
+const BARS = 3;
+const BAR_DUR = 0.9;
+// Alturas en reposo, para lo que no anima (previews, lectores de feed): tres
+// barras parejas se leen como "…" y parecen un spinner, no un ecualizador.
+const BAR_STILL = [6, 9, 4];
+
 const ROW_ART = 28;
 const ROW_GAP = 11;
 const ROW_PITCH = 38;
@@ -78,6 +91,26 @@ function artTile(ctx, art, x, y, size, radius, palette) {
   return `<image x="${x}" y="${round(y)}" width="${size}" height="${size}" href="${art}" clip-path="url(#${id})" preserveAspectRatio="xMidYMid slice"/>`;
 }
 
+// Las tres barras arrancan desfasadas para que no suban y bajen al unísono.
+// El offset es negativo a propósito: un begin positivo dejaría la primera
+// vuelta quieta, y lo primero que se ve de la card sería justo lo que no se
+// mueve.
+function equalizer(x, bottom, fill) {
+  const bars = [];
+  for (let i = 0; i < BARS; i++) {
+    const bx = x + i * (BAR_W + BAR_GAP);
+    const begin = round(-(i * BAR_DUR) / BARS);
+    const still = BAR_STILL[i % BAR_STILL.length];
+    bars.push(
+      `<rect x="${round(bx)}" y="${round(bottom - still)}" width="${BAR_W}" height="${still}" rx="1" fill="${fill}">` +
+        `<animate attributeName="height" values="${BAR_MIN};${BAR_MAX};${BAR_MIN}" dur="${BAR_DUR}s" begin="${begin}s" repeatCount="indefinite"/>` +
+        `<animate attributeName="y" values="${round(bottom - BAR_MIN)};${round(bottom - BAR_MAX)};${round(bottom - BAR_MIN)}" dur="${BAR_DUR}s" begin="${begin}s" repeatCount="indefinite"/>` +
+        `</rect>`,
+    );
+  }
+  return bars.join("");
+}
+
 export function renderCard(tracks, { palette, locale, now = Date.now() }) {
   if (!Array.isArray(tracks) || tracks.length === 0) {
     throw new Error("renderCard necesita al menos un track");
@@ -95,16 +128,32 @@ export function renderCard(tracks, { palette, locale, now = Date.now() }) {
   body.push(artTile(ctx, hero.art, PAD, heroTop, HERO_ART, 8, palette));
 
   const labelBaseline = heroTop + 11;
+  const label = (
+    hero.isNowPlaying ? locale.strings.nowPlaying : locale.strings.recentlyPlayed
+  ).toUpperCase();
+  const labelX = textX + LOGO_SIZE + LOGO_GAP;
+  const labelW = heroTextW - LOGO_SIZE - LOGO_GAP;
+
   body.push(
     `<g transform="translate(${textX} ${round(labelBaseline - LOGO_SIZE * CAP - 1)}) scale(${round(LOGO_SIZE / 24)})"><path d="${SPOTIFY_PATH}" fill="${palette.brand}"/></g>`,
-    clippedText(ctx, locale.strings.recentlyPlayed.toUpperCase(), {
-      x: textX + LOGO_SIZE + LOGO_GAP,
+    clippedText(ctx, label, {
+      x: labelX,
       y: labelBaseline,
-      w: heroTextW - LOGO_SIZE - LOGO_GAP,
+      w: labelW,
       size: LABEL_SIZE,
-      fill: palette.meta,
+      fill: hero.isNowPlaying ? palette.brand : palette.meta,
     }),
   );
+
+  if (hero.isNowPlaying) {
+    // El ecualizador va después del texto de la etiqueta. Si la traducción es
+    // larga y no queda lugar, se omite: es decoración, no puede empujar nada.
+    const barsX = labelX + estimateWidth(label, LABEL_SIZE) + 7;
+    const barsW = BARS * BAR_W + (BARS - 1) * BAR_GAP;
+    if (barsX + barsW <= W - PAD) {
+      body.push(equalizer(barsX, labelBaseline, palette.brand));
+    }
+  }
 
   const titleBaseline = labelBaseline + 22;
   body.push(
@@ -125,9 +174,17 @@ export function renderCard(tracks, { palette, locale, now = Date.now() }) {
     }),
   );
 
-  if (hero.playedAt) {
+  // Lo que suena ahora no tiene "hace cuánto": ese renglón lo ocupa el álbum,
+  // que además es el dato que falta cuando el título y el artista ya están.
+  const heroMeta = hero.isNowPlaying
+    ? (hero.album ?? "")
+    : hero.playedAt
+      ? locale.relativeTime(hero.playedAt, now)
+      : "";
+
+  if (heroMeta) {
     body.push(
-      clippedText(ctx, locale.relativeTime(hero.playedAt, now), {
+      clippedText(ctx, truncate(heroMeta, TIME_SIZE, heroTextW), {
         x: textX,
         y: titleBaseline + 35,
         w: heroTextW,

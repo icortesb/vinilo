@@ -19,6 +19,7 @@ const tracks = (n) =>
 // Deps de un camino feliz; cada test pisa lo que necesita.
 const happy = (over = {}) => ({
   recentlyPlayed: async () => tracks(5),
+  nowPlaying: async () => null,
   attachArt: async (ts) => ts.map((t) => ({ ...t, art: "data:image/jpeg;base64,AA" })),
   publish: async () => ({ committed: true }),
   writeFile: async () => {},
@@ -146,4 +147,111 @@ test("importar el módulo no ejecuta la Action, ni dentro de Actions", async () 
     if (before === undefined) delete process.env.GITHUB_ACTIONS;
     else process.env.GITHUB_ACTIONS = before;
   }
+});
+
+// ── now playing ─────────────────────────────────────────────────────────────
+
+const playing = {
+  name: "Strategy", artist: "TWICE", album: "Strategy",
+  artUrl: "now.jpg", playedAt: null,
+};
+
+const heroOf = (seen) => seen.files[0].content;
+
+test("lo que suena ahora manda: es el hero y lleva la etiqueta", async () => {
+  let seen = null;
+  const r = await run({
+    inputs: { ...inputs, publishTo: "v" },
+    deps: happy({ nowPlaying: async () => playing, publish: async (a) => { seen = a; } }),
+  });
+  assert.equal(r.outcome, "published");
+  assert.match(heroOf(seen), /NOW PLAYING/);
+  assert.ok(heroOf(seen).includes("Strategy"));
+});
+
+test("el hero que suena no agranda la card: sale el track más viejo", async () => {
+  let seen = null;
+  await run({
+    inputs: { ...inputs, publishTo: "v" },
+    deps: happy({ nowPlaying: async () => playing, publish: async (a) => { seen = a; } }),
+  });
+  assert.ok(!heroOf(seen).includes("Track 4"));
+  assert.ok(heroOf(seen).includes("Track 0"));
+});
+
+test("el track que suena no se repite abajo si ya está en el historial", async () => {
+  let seen = null;
+  const historial = [{ ...playing, playedAt: new Date(NOW - 60_000).toISOString() }, ...tracks(4)];
+  await run({
+    inputs: { ...inputs, publishTo: "v" },
+    deps: happy({
+      recentlyPlayed: async () => historial,
+      nowPlaying: async () => playing,
+      publish: async (a) => { seen = a; },
+    }),
+  });
+  assert.equal(heroOf(seen).match(/Strategy/g).length, 2); // título + álbum, una sola vez
+});
+
+test("sin nada sonando la card es la de siempre", async () => {
+  let seen = null;
+  await run({
+    inputs: { ...inputs, publishTo: "v" },
+    deps: happy({ nowPlaying: async () => null, publish: async (a) => { seen = a; } }),
+  });
+  assert.match(heroOf(seen), /RECENTLY PLAYED/);
+  assert.ok(heroOf(seen).includes("Track 4"));
+});
+
+test("si el reproductor falla la card se publica igual", async () => {
+  const r = await run({
+    inputs,
+    deps: happy({
+      nowPlaying: async () => { throw Object.assign(new Error("503"), { kind: "transient" }); },
+    }),
+  });
+  assert.equal(r.outcome, "published");
+  assert.equal(r.trackCount, 5);
+});
+
+test("un 403 del reproductor no hace fallar la Action, pero avisa del scope", async () => {
+  const r = await run({
+    inputs,
+    deps: happy({
+      nowPlaying: async () => { throw Object.assign(new Error("el reproductor falló con 403"), { kind: "auth" }); },
+    }),
+  });
+  assert.equal(r.outcome, "published");
+  // Un info se pierde en el log; tiene que salir como warning amarillo.
+  assert.match(r.warning, /user-read-currently-playing/);
+});
+
+test("sin problemas con el reproductor no hay warning", async () => {
+  const r = await run({ inputs, deps: happy() });
+  assert.equal(r.warning, undefined);
+});
+
+test("con algo sonando y sin historial hay card igual", async () => {
+  const r = await run({
+    inputs,
+    deps: happy({ recentlyPlayed: async () => [], nowPlaying: async () => playing }),
+  });
+  assert.equal(r.outcome, "published");
+  assert.equal(r.trackCount, 1);
+});
+
+test("un historial caído no publica una card de un solo track", async () => {
+  // Reemplazar una card buena de 5 por una de 1 sería un downgrade causado por
+  // una falla transitoria: exactamente lo que la card anterior evita.
+  let published = false;
+  const r = await run({
+    inputs,
+    deps: happy({
+      recentlyPlayed: async () => { throw Object.assign(new Error("429"), { kind: "transient" }); },
+      nowPlaying: async () => playing,
+      publish: async () => { published = true; },
+    }),
+  });
+  assert.equal(r.outcome, "skipped");
+  assert.equal(published, false);
 });

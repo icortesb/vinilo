@@ -14,7 +14,7 @@ inputs:
     description: Client secret of your Spotify app
     required: true
   refresh-token:
-    description: Refresh token with the user-read-recently-played scope
+    description: Refresh token with the user-read-recently-played and user-read-currently-playing scopes
     required: true
   count:
     description: How many tracks to show (1-10)

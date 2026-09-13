@@ -138,3 +138,48 @@ test("sigue bien formado con nombres hostiles", () => {
   tracks[2].artist = "A & B";
   assertWellFormed(renderCard(tracks, opts()));
 });
+
+// ── hero "suena ahora" ──────────────────────────────────────────────────────
+
+const playingFixture = (n) => {
+  const tracks = fixture(n);
+  tracks[0] = { ...tracks[0], isNowPlaying: true, playedAt: null, album: "Strategy" };
+  return tracks;
+};
+
+test("el hero que suena ahora lleva la etiqueta de suena ahora", () => {
+  const svg = renderCard(playingFixture(5), opts());
+  const locale = loadLocale("en");
+  assert.ok(svg.includes(esc(locale.strings.nowPlaying.toUpperCase())));
+  assert.ok(!svg.includes(esc(locale.strings.recentlyPlayed.toUpperCase())));
+});
+
+test("suena ahora dibuja barras animadas", () => {
+  const svg = renderCard(playingFixture(5), opts());
+  assert.ok(svg.includes("<animate "));
+});
+
+test("sin nada sonando no hay animación", () => {
+  assert.ok(!renderCard(fixture(5), opts()).includes("<animate"));
+});
+
+test("suena ahora pone el álbum donde iba el tiempo", () => {
+  const svg = renderCard(playingFixture(5), opts());
+  assert.ok(svg.includes("Strategy"));
+});
+
+test("suena ahora sin álbum renderiza igual", () => {
+  const tracks = playingFixture(2);
+  tracks[0].album = "";
+  assert.doesNotThrow(() => renderCard(tracks, opts()));
+});
+
+test("el hero que suena ahora sigue bien formado", () => {
+  assertWellFormed(renderCard(playingFixture(5), opts()));
+  assertWellFormed(renderCard(playingFixture(1), opts()));
+});
+
+test("la etiqueta de suena ahora respeta el locale", () => {
+  const svg = renderCard(playingFixture(2), { ...opts(), locale: loadLocale("es") });
+  assert.ok(svg.includes("SUENA AHORA"));
+});
